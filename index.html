@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informatika Kelas 10 - Algoritma & Struktur Data</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    },
+                    colors: {
+                        pixar: {
+                            blue: '#0066FF',
+                            sky: '#38BDF8',
+                            purple: '#8B5CF6',
+                            pink: '#EC4899',
+                            yellow: '#F59E0B',
+                            orange: '#F97316',
+                            green: '#10B981',
+                            dark: '#0F172A',
+                            card: '#1E293B'
+                        }
+                    },
+                    boxShadow: {
+                        'pixar': '0 10px 25px -5px rgba(0, 102, 255, 0.4), 0 8px 10px -6px rgba(0, 102, 255, 0.2)',
+                        'pixar-orange': '0 10px 25px -5px rgba(249, 115, 22, 0.4), 0 8px 10px -6px rgba(249, 115, 22, 0.2)',
+                        'pixar-purple': '0 10px 25px -5px rgba(139, 92, 246, 0.4), 0 8px 10px -6px rgba(139, 92, 246, 0.2)',
+                        '3d': '0 8px 0px 0px rgba(0,0,0,0.2)',
+                        '3d-btn': '0 6px 0px 0px rgba(0,0,0,0.25)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Styling Kartu Gaya Pixar 3D */
+        .pixar-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .pixar-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 20px 30px -10px rgba(56, 189, 248, 0.3);
+        }
+
+        .pixar-btn {
+            transition: all 0.15s ease;
+            position: relative;
+            top: 0;
+        }
+
+        .pixar-btn:active {
+            top: 4px;
+            box-shadow: 0 2px 0px 0px rgba(0,0,0,0.2) !important;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #38bdf8;
+            border-radius: 5px;
+        }
+
+        /* Animation Keyframes */
+        @keyframes pulse-slow {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        .animate-pulse-slow {
+            animation: pulse-slow 3s infinite ease-in-out;
+        }
+
+        /* Visualizer Element Transitions */
+        .array-bar {
+            transition: all 0.4s ease;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-slate-100 flex flex-col min-h-screen">
+
+    <!-- NAVBAR -->
+    <header class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-700/60 px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchSection('home')">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-sky-400 to-blue-600 flex items-center justify-center text-white text-xl font-black shadow-lg shadow-sky-500/30">
+                    <i class="fa-solid fa-code"></i>
+                </div>
+                <div>
+                    <span class="text-xl font-black bg-gradient-to-r from-sky-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">AlgoData</span>
+                    <span class="text-xs text-sky-400 block font-medium">Informatika Kelas 10</span>
+                </div>
+            </div>
+
+            <!-- Navigation Menu -->
+            <nav class="hidden md:flex space-x-1 lg:space-x-2 bg-slate-800/80 p-1.5 rounded-2xl border border-slate-700">
+                <button onclick="switchSection('panduan')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-compass text-amber-400"></i> Panduan
+                </button>
+                <button onclick="switchSection('tujuan')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-bullseye text-emerald-400"></i> Tujuan
+                </button>
+                <button onclick="switchSection('materi')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-book-open text-sky-400"></i> Materi & Simulasi
+                </button>
+                <button onclick="switchSection('gim')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-gamepad text-purple-400"></i> Gim (3)
+                </button>
+                <button onclick="switchSection('quiz')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-trophy text-pink-400"></i> Kuis
+                </button>
+                <button onclick="switchSection('pengembang')" class="nav-btn px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-700 transition flex items-center gap-2">
+                    <i class="fa-solid fa-user-astronaut text-indigo-400"></i> Profil
+                </button>
+            </nav>
+
+            <!-- Mobile Menu Toggle -->
+            <button id="mobile-menu-btn" class="md:hidden p-2 rounded-lg bg-slate-800 text-sky-400 focus:outline-none">
+                <i class="fa-solid fa-bars text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden md:hidden pt-3 pb-2 border-t border-slate-700 mt-2 flex flex-col space-y-2">
+            <button onclick="switchSection('panduan')" class="px-4 py-2 text-left rounded-lg hover:bg-slate-800 flex items-center gap-2"><i class="fa-solid fa-compass text-amber-400"></i> Panduan</button>
+            <button onclick="switchSection('tujuan')" class="px-4 py-2 text-left rounded-lg hover:bg-slate-800 flex items-center gap-2"><i class="fa-solid fa-bullseye text-emerald-400"></i> Tujuan</button>
+            <button onclick="switchSection('materi')" class="px-4 py-2 text-left rounded-lg hover:bg-slate-800 flex items-center gap-2"><i class="fa-solid fa-book-open text-sky-400"></i> Materi & Simulasi</button>
+            <button onclick="switchSection('gim')" class="px-4 py-2 text-left rounded-lg hover:bg-slate-800 flex items-center gap-2"><i class="fa-solid fa-gamepad text-purple-400"></i> Gim</button>
+            <button onclick="switchSection('quiz')" class="px-4 py-2 text-left rounded-lg hover:bg-slate-800 flex items-center gap-2"><i class="fa-solid fa-trophy text-pink-400"></i> Kuis</button>
+            <button onclick="switchSection('pengembang')" class="px-4 py-2 text-left rounded-lg hover:bg-slate-800 flex items-center gap-2"><i class="fa-solid fa-user-astronaut text-indigo-400"></i> Profil</button>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8">
+
+        <!-- ================= SECTION HOME / LANDING ================= -->
+        <section id="sec-home" class="content-section flex flex-col items-center justify-center min-h-[75vh] text-center">
+            <div class="relative mb-6">
+                <div class="absolute -inset-1 bg-gradient-to-r from-sky-500 via-purple-500 to-pink-500 rounded-full blur-xl opacity-75 animate-pulse"></div>
+                <div class="relative bg-slate-900 rounded-full p-6 border-4 border-slate-700">
+                    <i class="fa-solid fa-cubes-stacked text-7xl text-sky-400"></i>
+                </div>
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-black mb-4 tracking-tight">
+                Petualangan <span class="bg-gradient-to-r from-sky-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">Algoritma & Struktur Data</span>
+            </h1>
+            <p class="text-slate-300 max-w-2xl text-lg md:text-xl mb-8 leading-relaxed">
+                Platform pembelajaran interaktif berbasis animasi 3D & Simulasi Visual. Khusus dirancang untuk siswa SMA kelas 10 (Fase E).
+            </p>
+            
+            <div class="flex flex-wrap justify-center gap-4">
+                <button onclick="switchSection('materi')" class="pixar-btn bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold px-8 py-4 rounded-2xl shadow-3d-btn hover:from-sky-400 hover:to-blue-500 text-lg flex items-center gap-3">
+                    <i class="fa-solid fa-play"></i> Mulai Belajar Sekarang
+                </button>
+                <button onclick="switchSection('gim')" class="pixar-btn bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold px-8 py-4 rounded-2xl shadow-3d-btn hover:from-purple-500 hover:to-pink-500 text-lg flex items-center gap-3">
+                    <i class="fa-solid fa-gamepad"></i> Mainkan Gim Interaktif
+                </button>
+            </div>
+
+            <!-- Quick Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mt-16">
+                <div class="pixar-card p-6 text-left border-l-4 border-l-sky-500">
+                    <div class="text-sky-400 text-2xl font-bold mb-2"><i class="fa-solid fa-magnifying-glass"></i> Pencarian</div>
+                    <p class="text-slate-400 text-sm">Pahami cara komputer menemukan data tercepat dengan Linear & Binary Search.</p>
+                </div>
+                <div class="pixar-card p-6 text-left border-l-4 border-l-amber-500">
+                    <div class="text-amber-400 text-2xl font-bold mb-2"><i class="fa-solid fa-arrow-down-a-z"></i> Pengurutan</div>
+                    <p class="text-slate-400 text-sm">Visualisasikan cara kerja Bubble, Insertion, dan Selection Sort secara transparan.</p>
+                </div>
+                <div class="pixar-card p-6 text-left border-l-4 border-l-purple-500">
+                    <div class="text-purple-400 text-2xl font-bold mb-2"><i class="fa-solid fa-layer-group"></i> Struktur Data</div>
+                    <p class="text-slate-400 text-sm">Eksplorasi konsep tumpukan (Stack) dan antrean (Queue) dalam kehidupan nyata.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION PANDUAN ================= -->
+        <section id="sec-panduan" class="content-section hidden">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8">
+                    <span class="bg-amber-500/20 text-amber-300 font-bold px-4 py-1.5 rounded-full text-sm border border-amber-500/30">Petunjuk Penggunaan</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold mt-3">Panduan Belajar Interaktif</h2>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="pixar-card p-6 flex gap-4 items-start">
+                        <div class="w-12 h-12 rounded-2xl bg-sky-500/20 text-sky-400 flex items-center justify-center text-2xl font-bold flex-shrink-0">1</div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1 text-sky-300">Pilih Tab Materi</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed">Gunakan menu di bagian atas untuk berpindah antara materi Pencarian, Pengurutan, atau Struktur Data.</p>
+                        </div>
+                    </div>
+                    <div class="pixar-card p-6 flex gap-4 items-start">
+                        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl font-bold flex-shrink-0">2</div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1 text-amber-300">Coba Simulasi Interaktif</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed">Jangan hanya membaca! Tekan tombol "Jalankan", "Tambah", atau "Hapus" pada kanvas simulasi untuk melihat algoritma bekerja secara langsung.</p>
+                        </div>
+                    </div>
+                    <div class="pixar-card p-6 flex gap-4 items-start">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-500/20 text-purple-400 flex items-center justify-center text-2xl font-bold flex-shrink-0">3</div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1 text-purple-300">Mainkan 3 Mini Game</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed">Uji pemahaman logismu melalui permainan seru: Labirin Search, Menara Stack, dan Antrean Kasir.</p>
+                        </div>
+                    </div>
+                    <div class="pixar-card p-6 flex gap-4 items-start">
+                        <div class="w-12 h-12 rounded-2xl bg-pink-500/20 text-pink-400 flex items-center justify-center text-2xl font-bold flex-shrink-0">4</div>
+                        <div>
+                            <h3 class="font-bold text-lg mb-1 text-pink-300">Evaluasi Diri dengan Kuis</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed">Selesaikan 5 soal kuis pilihan ganda untuk mengukur seberapa jauh pemahaman materi yang telah didapatkan.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pixar-card p-6 mt-8 bg-gradient-to-r from-sky-900/40 to-slate-800 border-sky-500/30 flex items-center gap-4">
+                    <i class="fa-solid fa-lightbulb text-3xl text-amber-400 animate-bounce"></i>
+                    <div>
+                        <h4 class="font-bold text-amber-300">Tips Sukses Belajar Informatika:</h4>
+                        <p class="text-slate-300 text-sm">Algoritma bukan tentang menghafal rumus, melainkan memahami urutan langkah logis pemecahan masalah!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION TUJUAN PEMBELAJARAN ================= -->
+        <section id="sec-tujuan" class="content-section hidden">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center mb-8">
+                    <span class="bg-emerald-500/20 text-emerald-300 font-bold px-4 py-1.5 rounded-full text-sm border border-emerald-500/30">Capaian Pembelajaran (Fase E)</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold mt-3">Tujuan Pembelajaran</h2>
+                </div>
+
+                <div class="pixar-card p-8 mb-8 text-center relative overflow-hidden">
+                    <div class="absolute -right-10 -bottom-10 opacity-10 text-emerald-400">
+                        <i class="fa-solid fa-graduation-cap text-9xl"></i>
+                    </div>
+                    <h3 class="text-2xl font-black text-emerald-300 mb-4">Tujuan Utama</h3>
+                    <p class="text-xl font-medium text-slate-100 max-w-2xl mx-auto leading-relaxed">
+                        "Murid mampu <span class="text-sky-400 font-bold underline decoration-sky-500">memahami</span> dan <span class="text-pink-400 font-bold underline decoration-pink-500">menerapkan</span> konsep Algoritma (Pencarian & Pengurutan) serta Struktur Data (Stack & Queue) dalam menyelesaikan masalah secara efisien."
+                    </p>
+                </div>
+
+                <h3 class="text-xl font-bold mb-4 text-slate-200">Indikator Ketercapaian:</h3>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="pixar-card p-6 border-t-4 border-t-sky-400">
+                        <div class="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center font-bold mb-3"><i class="fa-solid fa-check"></i></div>
+                        <h4 class="font-bold mb-2">Pencarian (Search)</h4>
+                        <p class="text-slate-300 text-sm">Menjelaskan perbedaan serta memilih antara Linear Search dan Binary Search sesuai kondisi data.</p>
+                    </div>
+                    <div class="pixar-card p-6 border-t-4 border-t-amber-400">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold mb-3"><i class="fa-solid fa-check"></i></div>
+                        <h4 class="font-bold mb-2">Pengurutan (Sort)</h4>
+                        <p class="text-slate-300 text-sm">Menganalisis mekanisme perbandingan data pada Bubble Sort, Insertion Sort, dan Selection Sort.</p>
+                    </div>
+                    <div class="pixar-card p-6 border-t-4 border-t-purple-400">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold mb-3"><i class="fa-solid fa-check"></i></div>
+                        <h4 class="font-bold mb-2">Struktur Data</h4>
+                        <p class="text-slate-300 text-sm">Menerapkan prinsip LIFO (Stack) dan FIFO (Queue) dalam skenario simulasi pemrograman nyata.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION MATERI & SIMULASI ================= -->
+        <section id="sec-materi" class="content-section hidden">
+            <!-- Sub Navigation Materi -->
+            <div class="flex flex-wrap justify-center gap-3 mb-8">
+                <button onclick="switchMateriTab('search')" id="tab-btn-search" class="materi-tab-btn px-6 py-3 rounded-2xl font-bold text-sm bg-sky-500 text-white shadow-lg transition">
+                    <i class="fa-solid fa-magnifying-glass mr-2"></i> 1. Algoritma Pencarian
+                </button>
+                <button onclick="switchMateriTab('sort')" id="tab-btn-sort" class="materi-tab-btn px-6 py-3 rounded-2xl font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-arrow-down-a-z mr-2"></i> 2. Algoritma Pengurutan
+                </button>
+                <button onclick="switchMateriTab('struct')" id="tab-btn-struct" class="materi-tab-btn px-6 py-3 rounded-2xl font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition">
+                    <i class="fa-solid fa-layer-group mr-2"></i> 3. Struktur Data
+                </button>
+            </div>
+
+            <!-- TAB 1: PENCARIAN -->
+            <div id="materi-search" class="materi-sub-content">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Teori -->
+                    <div class="lg:col-span-1 space-y-6">
+                        <div class="pixar-card p-6 border-l-4 border-l-sky-500">
+                            <h3 class="text-xl font-black text-sky-400 mb-2">Linear Search</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-3">
+                                Metode pencarian yang mengecek data **satu per satu secara urut** dari elemen pertama hingga data ditemukan atau hingga akhir array.
+                            </p>
+                            <span class="bg-sky-500/20 text-sky-300 text-xs px-2.5 py-1 rounded-md font-semibold">Syarat: Data acak / Bebas</span>
+                        </div>
+                        <div class="pixar-card p-6 border-l-4 border-l-indigo-500">
+                            <h3 class="text-xl font-black text-indigo-400 mb-2">Binary Search</h3>
+                            <p class="text-slate-300 text-sm leading-relaxed mb-3">
+                                Metode pencarian pintar dengan **membagi dua (divide and conquer)** wilayah pencarian secara berulang. Jauh lebih cepat dibanding Linear Search!
+                            </p>
+                            <span class="bg-indigo-500/20 text-indigo-300 text-xs px-2.5 py-1 rounded-md font-semibold">Syarat Wajib: Data HARUS Terurut</span>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Visualizer -->
+                    <div class="lg:col-span-2 pixar-card p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold text-slate-200"><i class="fa-solid fa-sliders text-sky-400 mr-2"></i>Simulasi Visual Pencarian</h3>
+                                <div class="flex gap-2">
+                                    <select id="search-algo-type" class="bg-slate-800 border border-slate-700 text-sm rounded-xl px-3 py-2 font-semibold text-sky-300">
+                                        <option value="linear">Linear Search</option>
+                                        <option value="binary">Binary Search (Auto-Sort)</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Visual Array Canvas -->
+                            <div id="search-array-container" class="flex justify-center items-end gap-2 h-48 bg-slate-900/60 rounded-2xl p-4 border border-slate-700/50 mb-6">
+                                <!-- Generated JS elements here -->
+                            </div>
+
+                            <!-- Control Panel -->
+                            <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-800/80 p-4 rounded-xl">
+                                <div class="flex items-center gap-3">
+                                    <label class="text-sm font-semibold text-slate-300">Cari Angka:</label>
+                                    <input type="number" id="search-target-input" value="42" class="w-20 bg-slate-900 border border-slate-700 text-center font-bold text-sky-400 py-1.5 rounded-lg focus:outline-none focus:border-sky-500">
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="resetSearchArray()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-sm text-slate-200 transition">Acak Data</button>
+                                    <button id="btn-start-search" onclick="runSearchSimulation()" class="px-6 py-2 bg-sky-500 hover:bg-sky-400 text-white rounded-xl font-bold text-sm shadow-lg transition">Mulai Cari</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step Info Log -->
+                        <div id="search-log" class="mt-4 p-3 bg-slate-900/80 rounded-xl text-center text-sm font-mono text-sky-300 border border-slate-700">
+                            Status: Siap menjalankan simulasi. Pilih angka lalu klik "Mulai Cari".
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: PENGURUTAN -->
+            <div id="materi-sort" class="materi-sub-content hidden">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <!-- Teori -->
+                    <div class="lg:col-span-1 space-y-4">
+                        <div class="pixar-card p-5 border-l-4 border-l-amber-500">
+                            <h3 class="text-lg font-black text-amber-400">Bubble Sort</h3>
+                            <p class="text-slate-300 text-xs mt-1 leading-relaxed">Membandingkan dua elemen bersebelahan dan menukarnya jika urutannya salah. Gelembung angka terbesar naik ke atas!</p>
+                        </div>
+                        <div class="pixar-card p-5 border-l-4 border-l-emerald-500">
+                            <h3 class="text-lg font-black text-emerald-400">Selection Sort</h3>
+                            <p class="text-slate-300 text-xs mt-1 leading-relaxed">Mencari nilai terkecil dari seluruh elemen acak, lalu menempatkannya di posisi paling depan.</p>
+                        </div>
+                        <div class="pixar-card p-5 border-l-4 border-l-pink-500">
+                            <h3 class="text-lg font-black text-pink-400">Insertion Sort</h3>
+                            <p class="text-slate-300 text-xs mt-1 leading-relaxed">Mirip mengurutkan kartu di tangan: mengambil satu elemen dan menyisipkannya di posisi yang tepat.</p>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Visualizer Sort -->
+                    <div class="lg:col-span-2 pixar-card p-6 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-bold text-slate-200"><i class="fa-solid fa-chart-simple text-amber-400 mr-2"></i>Simulasi Visual Pengurutan</h3>
+                                <select id="sort-algo-type" class="bg-slate-800 border border-slate-700 text-sm rounded-xl px-3 py-2 font-semibold text-amber-300">
+                                    <option value="bubble">Bubble Sort</option>
+                                    <option value="selection">Selection Sort</option>
+                                    <option value="insertion">Insertion Sort</option>
+                                </select>
+                            </div>
+
+                            <!-- Array Bar Canvas -->
+                            <div id="sort-array-container" class="flex justify-center items-end gap-3 h-52 bg-slate-900/60 rounded-2xl p-4 border border-slate-700/50 mb-6">
+                                <!-- Generated JS Bars Here -->
+                            </div>
+
+                            <div class="flex flex-wrap items-center justify-between gap-4 bg-slate-800/80 p-4 rounded-xl">
+                                <div class="text-sm font-medium text-slate-300">
+                                    Jumlah Elemen: <span class="font-bold text-amber-400">8 Batang</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="resetSortArray()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-sm text-slate-200 transition">Acak Ulang</button>
+                                    <button id="btn-start-sort" onclick="runSortSimulation()" class="px-6 py-2 bg-amber-500 hover:bg-amber-400 text-slate-900 font-bold rounded-xl text-sm shadow-lg transition">Mulai Urutkan</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step Info Log -->
+                        <div id="sort-log" class="mt-4 p-3 bg-slate-900/80 rounded-xl text-center text-sm font-mono text-amber-300 border border-slate-700">
+                            Status: Klik "Mulai Urutkan" untuk melihat pergantian posisi angka.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: STRUKTUR DATA -->
+            <div id="materi-struct" class="materi-sub-content hidden">
+                <div class="grid lg:grid-cols-2 gap-8">
+                    <!-- STACK SIMULATOR -->
+                    <div class="pixar-card p-6 flex flex-col justify-between border-t-4 border-t-purple-500">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-black text-purple-400"><i class="fa-solid fa-layer-group mr-2"></i>Stack (Tumpukan)</h3>
+                                <span class="bg-purple-500/20 text-purple-300 text-xs px-3 py-1 rounded-full font-bold">LIFO (Last In, First Out)</span>
+                            </div>
+                            <p class="text-slate-300 text-xs mb-4">Elemen yang <b>terakhir masuk</b> akan menjadi elemen yang <b>pertama keluar</b> (Seperti tumpukan piring atau tombol Undo).</p>
+
+                            <!-- Stack Visual Container -->
+                            <div class="bg-slate-900/60 border border-slate-700 rounded-2xl p-4 h-64 flex flex-col-reverse items-center gap-2 overflow-y-auto mb-4" id="stack-container">
+                                <!-- Stack Elements Go Here -->
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex gap-2">
+                                <input type="text" id="stack-input" placeholder="Isi Elemen (Misal: Buku A)" class="flex-grow bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 rounded-xl focus:outline-none focus:border-purple-500">
+                                <button onclick="pushStack()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-sm rounded-xl transition">PUSH (Tambah)</button>
+                                <button onclick="popStack()" class="px-4 py-2 bg-pink-600 hover:bg-pink-500 text-white font-bold text-sm rounded-xl transition">POP (Hapus)</button>
+                            </div>
+                            <p id="stack-log" class="text-xs text-center font-mono text-purple-300">Stack siap digunakan.</p>
+                        </div>
+                    </div>
+
+                    <!-- QUEUE SIMULATOR -->
+                    <div class="pixar-card p-6 flex flex-col justify-between border-t-4 border-t-emerald-500">
+                        <div>
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-black text-emerald-400"><i class="fa-solid fa-users-line mr-2"></i>Queue (Antrean)</h3>
+                                <span class="bg-emerald-500/20 text-emerald-300 text-xs px-3 py-1 rounded-full font-bold">FIFO (First In, First Out)</span>
+                            </div>
+                            <p class="text-slate-300 text-xs mb-4">Elemen yang <b>pertama masuk</b> akan menjadi elemen yang <b>pertama keluar</b> (Seperti antrean beli tiket bioskop).</p>
+
+                            <!-- Queue Visual Container -->
+                            <div class="bg-slate-900/60 border border-slate-700 rounded-2xl p-4 h-64 flex items-center gap-2 overflow-x-auto mb-4" id="queue-container">
+                                <!-- Queue Elements Go Here -->
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex gap-2">
+                                <input type="text" id="queue-input" placeholder="Isi Orang (Misal: Andi)" class="flex-grow bg-slate-900 border border-slate-700 text-sm text-slate-200 px-3 py-2 rounded-xl focus:outline-none focus:border-emerald-500">
+                                <button onclick="enqueue()" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm rounded-xl transition">ENQUEUE</button>
+                                <button onclick="dequeue()" class="px-4 py-2 bg-orange-600 hover:bg-orange-500 text-white font-bold text-sm rounded-xl transition">DEQUEUE</button>
+                            </div>
+                            <p id="queue-log" class="text-xs text-center font-mono text-emerald-300">Queue siap digunakan.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION GIM INTERAKTIF (3 GIM) ================= -->
+        <section id="sec-gim" class="content-section hidden">
+            <div class="text-center mb-8">
+                <span class="bg-purple-500/20 text-purple-300 font-bold px-4 py-1.5 rounded-full text-sm border border-purple-500/30">Mini Games Edukasi</span>
+                <h2 class="text-3xl md:text-4xl font-extrabold mt-3">Area Gim Tantangan</h2>
+            </div>
+
+            <!-- Tab Switcher Game -->
+            <div class="flex justify-center gap-3 mb-8">
+                <button onclick="switchGame('game1')" id="gtab-1" class="game-tab-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-purple-600 text-white shadow-lg">Gim 1: Detektif Binary</button>
+                <button onclick="switchGame('game2')" id="gtab-2" class="game-tab-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition">Gim 2: Susun Tumpukan Stack</button>
+                <button onclick="switchGame('game3')" id="gtab-3" class="game-tab-btn px-5 py-2.5 rounded-xl font-bold text-sm bg-slate-800 text-slate-400 hover:text-white transition">Gim 3: Queue Master</button>
+            </div>
+
+            <!-- GAME 1: BINARY SEARCH TEBAK ANGKA -->
+            <div id="game-1-container" class="pixar-card p-6 max-w-2xl mx-auto text-center">
+                <h3 class="text-2xl font-black text-sky-400 mb-2"><i class="fa-solid fa-magnifying-glass mr-2"></i>Gim 1: Detektif Angka (Binary Search)</h3>
+                <p class="text-slate-300 text-sm mb-6">Komputer telah memilih angka rahasia antara **1 hingga 100**. Gunakan strategi pemotongan setengah area untuk menebak dalam kurang dari 7 kali!</p>
+                
+                <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 mb-6">
+                    <div id="g1-feedback" class="text-lg font-bold text-amber-400 mb-4 min-h-[56px] flex items-center justify-center">
+                        Saya sudah memilih angka! Siapkan tebakan pertamamu.
+                    </div>
+                    <div class="flex justify-center items-center gap-3">
+                        <input type="number" id="g1-guess-input" min="1" max="100" placeholder="1-100" class="w-28 bg-slate-800 border-2 border-sky-500 text-center font-black text-2xl text-white py-2 rounded-xl focus:outline-none focus:border-sky-300">
+                        <button onclick="playGame1Guess()" class="px-6 py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl shadow-lg transition">Tebak!</button>
+                        <button onclick="resetGame1()" class="px-4 py-3 bg-slate-700 hover:bg-slate-600 text-slate-200 font-bold rounded-xl transition" title="Acak Ulang Angka"><i class="fa-solid fa-rotate-right"></i></button>
+                    </div>
+                </div>
+                <div class="flex justify-around text-sm font-semibold text-slate-400 bg-slate-800/50 p-3 rounded-xl">
+                    <div>Percobaan: <span id="g1-attempts" class="text-sky-400 font-bold">0</span></div>
+                    <div>Target Maksimal: <span class="text-emerald-400 font-bold">7 Kali (Log₂ 100)</span></div>
+                </div>
+            </div>
+
+            <!-- GAME 2: TOWER OF STACK -->
+            <div id="game-2-container" class="pixar-card p-6 max-w-2xl mx-auto text-center hidden">
+                <h3 class="text-2xl font-black text-purple-400 mb-2"><i class="fa-solid fa-layer-group mr-2"></i>Gim 2: Tantangan Susun Piring Stack</h3>
+                <p class="text-slate-300 text-sm mb-6">Susun elemen warna sesuai **Target Resep** (dari Bawah ke Atas). Ingat prinsip **LIFO** (Last In, First Out)!</p>
+
+                <div class="grid grid-cols-2 gap-6 mb-6">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+                        <h4 class="font-bold text-xs text-slate-400 mb-3 uppercase tracking-wider">TARGET RESEP (Bawah &rarr; Atas)</h4>
+                        <div id="g2-target-recipe" class="flex flex-col-reverse items-center gap-2 min-h-[160px] justify-start p-3 border border-slate-800 rounded-xl bg-slate-950/40">
+                            <!-- Target elements dynamically rendered -->
+                        </div>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-700">
+                        <h4 class="font-bold text-xs text-slate-400 mb-3 uppercase tracking-wider">TUMPUKAN KAMU (LIFO)</h4>
+                        <div id="g2-user-stack" class="flex flex-col-reverse items-center gap-2 min-h-[160px] justify-start p-3 border border-purple-900/50 rounded-xl bg-slate-950/40">
+                            <!-- User stack elements dynamically rendered -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-center gap-2 mb-6">
+                    <button onclick="pushGame2Stack('🔴 Merah')" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold text-xs rounded-xl shadow transition">+ 🔴 Merah</button>
+                    <button onclick="pushGame2Stack('🔵 Biru')" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl shadow transition">+ 🔵 Biru</button>
+                    <button onclick="pushGame2Stack('🟡 Kuning')" class="px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs rounded-xl shadow transition">+ 🟡 Kuning</button>
+                    <button onclick="popGame2Stack()" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-pink-400 font-bold text-xs rounded-xl shadow transition"><i class="fa-solid fa-arrow-up-from-bracket mr-1"></i> POP (Ambil Top)</button>
+                    <button onclick="resetGame2()" class="px-3 py-2 bg-slate-800 text-slate-400 hover:text-white rounded-xl text-xs"><i class="fa-solid fa-arrows-rotate"></i> Reset</button>
+                </div>
+                <button onclick="checkGame2Win()" class="w-full py-3.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-bold rounded-2xl shadow-lg transition text-sm">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> Periksa Susunan Stack
+                </button>
+            </div>
+
+            <!-- GAME 3: QUEUE KASIR SUPERMARKET -->
+            <div id="game-3-container" class="pixar-card p-6 max-w-2xl mx-auto text-center hidden">
+                <h3 class="text-2xl font-black text-emerald-400 mb-2"><i class="fa-solid fa-users-line mr-2"></i>Gim 3: Layani Antrean (Queue Master)</h3>
+                <p class="text-slate-300 text-sm mb-6">Layani pelanggan yang berada di **paling depan antrean** (FIFO)! Dapatkan poin dengan melayani pelanggan yang benar.</p>
+
+                <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-700 mb-6 text-left">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-wider"><i class="fa-solid fa-shop text-emerald-400 mr-1"></i> Garis Antrean Supermarket</span>
+                        <span class="text-xs text-slate-400 font-semibold">Skor Layanan: <span id="g3-score" class="text-emerald-400 font-bold text-base">0</span></span>
+                    </div>
+                    <div id="g3-queue-display" class="flex items-center gap-3 overflow-x-auto min-h-[90px] p-3 bg-slate-950/60 rounded-xl border border-slate-800">
+                        <!-- Queue customers rendered -->
+                    </div>
+                </div>
+
+                <div class="flex flex-wrap justify-between items-center gap-3">
+                    <button onclick="addGame3Customer()" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-600 text-emerald-300 font-bold text-sm rounded-xl transition flex items-center gap-2">
+                        <i class="fa-solid fa-user-plus"></i> + Pembeli Baru
+                    </button>
+                    <button onclick="serveGame3Customer()" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-bold rounded-xl shadow-lg transition flex items-center gap-2">
+                        <i class="fa-solid fa-cash-register"></i> Layani Pelanggan Terdepan! (DEQUEUE)
+                    </button>
+                </div>
+            </div>
+
+            <!-- MODAL MESSAGE BOX (Kustom pengganti Alert) -->
+            <div id="custom-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+                <div class="pixar-card p-6 max-w-md w-full text-center border-2 border-sky-500/50 shadow-2xl animate-pulse-slow">
+                    <div id="modal-icon" class="text-5xl mb-3">🎉</div>
+                    <h3 id="modal-title" class="text-2xl font-black text-white mb-2">Pemberitahuan</h3>
+                    <p id="modal-message" class="text-slate-300 text-sm mb-6 leading-relaxed">Pesan pesan.</p>
+                    <button onclick="closeModal()" class="w-full py-3 bg-sky-500 hover:bg-sky-400 text-white font-bold rounded-xl transition">Mengerti</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION KUIS INTERAKTIF (5 PG) ================= -->
+        <section id="sec-quiz" class="content-section hidden">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center mb-8">
+                    <span class="bg-pink-500/20 text-pink-300 font-bold px-4 py-1.5 rounded-full text-sm border border-pink-500/30">Uji Pemahaman</span>
+                    <h2 class="text-3xl md:text-4xl font-extrabold mt-3">Kuis Algoritma & Data</h2>
+                </div>
+
+                <div id="quiz-box" class="pixar-card p-6 md:p-8">
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-800 h-3 rounded-full mb-6 overflow-hidden">
+                        <div id="quiz-progress" class="bg-gradient-to-r from-pink-500 to-purple-500 h-full w-1/5 transition-all duration-300"></div>
+                    </div>
+
+                    <!-- Question Container -->
+                    <div id="quiz-question-container">
+                        <div class="flex justify-between items-center mb-4">
+                            <span id="quiz-question-number" class="text-xs font-bold text-pink-400 uppercase tracking-widest">Soal 1 dari 5</span>
+                            <span class="text-xs text-slate-400 font-semibold"><i class="fa-solid fa-clock"></i> Pilihan Ganda</span>
+                        </div>
+                        <h3 id="quiz-question-text" class="text-xl font-bold mb-6 text-slate-100 leading-snug">
+                            <!-- Question Text -->
+                        </h3>
+
+                        <!-- Options -->
+                        <div id="quiz-options-container" class="space-y-3">
+                            <!-- Option Buttons generated dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Result Container -->
+                    <div id="quiz-result-container" class="hidden text-center py-6">
+                        <div class="w-24 h-24 mx-auto rounded-full bg-pink-500/20 flex items-center justify-center text-pink-400 text-5xl mb-4">
+                            <i class="fa-solid fa-trophy"></i>
+                        </div>
+                        <h3 class="text-3xl font-black mb-2 text-white">Kuis Selesai!</h3>
+                        <p class="text-slate-300 text-lg mb-6">Skor Akhir Kamu: <span id="quiz-score" class="text-pink-400 font-bold text-3xl">0</span> / 100</p>
+                        <button onclick="restartQuiz()" class="px-8 py-3 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-xl shadow-lg transition hover:scale-105">Ulangi Kuis</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SECTION PROFIL PENGEMBANG ================= -->
+        <section id="sec-pengembang" class="content-section hidden">
+            <div class="max-w-2xl mx-auto pixar-card p-8 text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-sky-500 via-indigo-500 to-purple-600"></div>
+                
+                <div class="relative z-10 pt-10">
+                    <div class="w-36 h-36 mx-auto rounded-3xl bg-slate-800 border-4 border-sky-400 p-1.5 shadow-2xl mb-4 overflow-hidden transform hover:scale-105 transition duration-300">
+                        <img src="1690428599719.jpg" onerror="this.onerror=null; this.src='https://placehold.co/300x300/1e293b/38bdf8?text=Nur+Tsawaabit';" alt="Nur Tsawaabit" class="w-full h-full object-cover rounded-2xl">
+                    </div>
+
+                    <h2 class="text-3xl font-black text-white">Nur Tsawaabit</h2>
+                    <p class="text-sky-400 font-semibold mb-4 text-lg">Guru Informatika</p>
+
+                    <div class="inline-block bg-slate-800/80 border border-slate-700 rounded-2xl px-6 py-3 mb-6 shadow-inner">
+                        <p class="text-slate-200 text-sm font-semibold">
+                            <i class="fa-solid fa-school text-amber-400 mr-2"></i> SMAS Daar El Qolam 2
+                        </p>
+                    </div>
+
+                    <p class="text-slate-300 text-sm max-w-md mx-auto leading-relaxed mb-6">
+                        "Berkomitmen menciptakan pembelajaran Informatika yang interaktif, menyenangkan, serta mudah dipahami oleh murid SMA Fase E melalui pemanfaatan teknologi web & visualisasi logis."
+                    </p>
+
+                    <div class="pt-6 border-t border-slate-700/60 flex justify-center gap-4 text-xs text-slate-400 font-medium">
+                        <span><i class="fa-solid fa-code text-sky-400"></i> Media Pembelajaran Interaktif</span>
+                        <span>•</span>
+                        <span>Fase E Kelas 10</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-950 border-t border-slate-800 py-6 text-center text-xs text-slate-500">
+        <p>© 2026 Media Pembelajaran Informatika SMA Phase E. Developed by <b>Nur Tsawaabit</b>.</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // ================= AUDIO SYNTHESIZER (Web Audio API) =================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'correct') {
+                // Suara Benar (Melodi Ceria)
+                const now = audioCtx.currentTime;
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now); // C5
+                osc.frequency.setValueAtTime(659.25, now + 0.1); // E5
+                osc.frequency.setValueAtTime(783.99, now + 0.2); // G5
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+                osc.start(now);
+                osc.stop(now + 0.4);
+            } else if (type === 'wrong') {
+                // Suara Salah (Buzz Rendah)
+                const now = audioCtx.currentTime;
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.25);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                osc.start(now);
+                osc.stop(now + 0.3);
+            }
+        }
+
+        // Kustom Modal Box pengganti Alert
+        function showModal(title, message, icon = '🎉') {
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-message').innerText = message;
+            document.getElementById('modal-icon').innerText = icon;
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+        }
+
+        // ================= SPA NAVIGATION =================
+        function switchSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
+            document.getElementById('sec-' + sectionId).classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Mobile Menu Toggle
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => {
+            document.getElementById('mobile-menu').classList.toggle('hidden');
+        });
+
+        // Sub Tab Materi
+        function switchMateriTab(tabName) {
+            document.querySelectorAll('.materi-sub-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById('materi-' + tabName).classList.remove('hidden');
+
+            document.querySelectorAll('.materi-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-sky-500', 'bg-amber-500', 'bg-purple-500', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
+            });
+
+            const activeBtn = document.getElementById('tab-btn-' + tabName);
+            activeBtn.classList.remove('bg-slate-800', 'text-slate-400');
+            if (tabName === 'search') activeBtn.classList.add('bg-sky-500', 'text-white');
+            if (tabName === 'sort') activeBtn.classList.add('bg-amber-500', 'text-white');
+            if (tabName === 'struct') activeBtn.classList.add('bg-purple-500', 'text-white');
+        }
+
+        // ================= SIMULASI SEARCH =================
+        let searchData = [12, 25, 34, 42, 51, 68, 73, 89, 95];
+        
+        function renderSearchArray(highlightIdx = -1, foundIdx = -1) {
+            const container = document.getElementById('search-array-container');
+            container.innerHTML = '';
+            searchData.forEach((val, idx) => {
+                const box = document.createElement('div');
+                box.className = `w-12 h-16 rounded-xl flex flex-col items-center justify-center font-bold text-lg border-2 transition-all duration-300 ${
+                    idx === foundIdx ? 'bg-emerald-500 border-emerald-300 text-white scale-110 shadow-lg shadow-emerald-500/50' :
+                    idx === highlightIdx ? 'bg-amber-500 border-amber-300 text-white scale-110' :
+                    'bg-slate-800 border-slate-600 text-sky-300'
+                }`;
+                box.innerHTML = `<span>${val}</span><span class="text-[10px] opacity-60 font-normal">i:${idx}</span>`;
+                container.appendChild(box);
+            });
+        }
+
+        function resetSearchArray() {
+            searchData = Array.from({length: 8}, () => Math.floor(Math.random() * 90) + 10);
+            if(document.getElementById('search-algo-type').value === 'binary') {
+                searchData.sort((a,b) => a - b);
+            }
+            renderSearchArray();
+            document.getElementById('search-log').innerText = "Data diacak kembali.";
+        }
+
+        async function runSearchSimulation() {
+            const target = parseInt(document.getElementById('search-target-input').value);
+            const algo = document.getElementById('search-algo-type').value;
+            const log = document.getElementById('search-log');
+            const btn = document.getElementById('btn-start-search');
+            btn.disabled = true;
+
+            if (algo === 'linear') {
+                let found = false;
+                for (let i = 0; i < searchData.length; i++) {
+                    renderSearchArray(i);
+                    log.innerText = `Memeriksa indeks [${i}]: Apakah ${searchData[i]} == ${target}?`;
+                    await new Promise(r => setTimeout(r, 700));
+
+                    if (searchData[i] === target) {
+                        renderSearchArray(-1, i);
+                        log.innerText = `[BERHASIL] Angka ${target} ditemukan di indeks [${i}]!`;
+                        found = true;
+                        playSound('correct');
+                        confetti({ particleCount: 50, spread: 60 });
+                        break;
+                    }
+                }
+                if (!found) {
+                    renderSearchArray();
+                    playSound('wrong');
+                    log.innerText = `[GAGAL] Angka ${target} tidak ditemukan dalam array.`;
+                }
+            } else {
+                // Binary Search
+                searchData.sort((a,b) => a - b);
+                renderSearchArray();
+                let low = 0, high = searchData.length - 1;
+                let found = false;
+
+                while (low <= high) {
+                    let mid = Math.floor((low + high) / 2);
+                    renderSearchArray(mid);
+                    log.innerText = `Bagi 2: Cek Indeks Tengah [${mid}] = ${searchData[mid]}`;
+                    await new Promise(r => setTimeout(r, 900));
+
+                    if (searchData[mid] === target) {
+                        renderSearchArray(-1, mid);
+                        log.innerText = `[BERHASIL] Angka ${target} Ditemukan di Indeks Tengah [${mid}]!`;
+                        found = true;
+                        playSound('correct');
+                        confetti({ particleCount: 50, spread: 60 });
+                        break;
+                    } else if (searchData[mid] < target) {
+                        log.innerText = `${searchData[mid]} < ${target}. Cari ke bagian KANAN.`;
+                        low = mid + 1;
+                    } else {
+                        log.innerText = `${searchData[mid]} > ${target}. Cari ke bagian KIRI.`;
+                        high = mid - 1;
+                    }
+                    await new Promise(r => setTimeout(r, 700));
+                }
+                if (!found) {
+                    renderSearchArray();
+                    playSound('wrong');
+                    log.innerText = `[GAGAL] Angka ${target} tidak ada dalam data.`;
+                }
+            }
+            btn.disabled = false;
+        }
+
+        // ================= SIMULASI SORTING =================
+        let sortData = [45, 12, 89, 33, 67, 21, 90, 5];
+
+        function renderSortBars(activeIndices = [], sortedIndices = []) {
+            const container = document.getElementById('sort-array-container');
+            container.innerHTML = '';
+            sortData.forEach((val, idx) => {
+                const bar = document.createElement('div');
+                const heightPercent = (val / 100) * 100;
+                
+                let bgColor = 'bg-slate-700 text-slate-300';
+                if (activeIndices.includes(idx)) bgColor = 'bg-amber-400 text-slate-900 scale-105 shadow-lg shadow-amber-400/50';
+                if (sortedIndices.includes(idx)) bgColor = 'bg-emerald-500 text-white';
+
+                bar.className = `array-bar w-10 flex flex-col justify-end items-center rounded-t-xl font-bold text-xs p-1 ${bgColor}`;
+                bar.style.height = `${Math.max(heightPercent, 20)}%`;
+                bar.innerText = val;
+                container.appendChild(bar);
+            });
+        }
+
+        function resetSortArray() {
+            sortData = Array.from({length: 8}, () => Math.floor(Math.random() * 80) + 10);
+            renderSortBars();
+            document.getElementById('sort-log').innerText = "Data diacak kembali.";
+        }
+
+        async function runSortSimulation() {
+            const algo = document.getElementById('sort-algo-type').value;
+            const log = document.getElementById('sort-log');
+            const btn = document.getElementById('btn-start-sort');
+            btn.disabled = true;
+
+            let arr = [...sortData];
+            let n = arr.length;
+            let sorted = [];
+
+            if (algo === 'bubble') {
+                for (let i = 0; i < n - 1; i++) {
+                    for (let j = 0; j < n - i - 1; j++) {
+                        renderSortBars([j, j + 1], sorted);
+                        log.innerText = `Membandingkan ${arr[j]} & ${arr[j+1]}`;
+                        await new Promise(r => setTimeout(r, 400));
+
+                        if (arr[j] > arr[j + 1]) {
+                            log.innerText = `Tukar posisi: ${arr[j]} > ${arr[j+1]}`;
+                            let temp = arr[j];
+                            arr[j] = arr[j + 1];
+                            arr[j + 1] = temp;
+                            sortData = [...arr];
+                            renderSortBars([j, j + 1], sorted);
+                            await new Promise(r => setTimeout(r, 400));
+                        }
+                    }
+                    sorted.push(n - 1 - i);
+                }
+                sorted.push(0);
+            } else if (algo === 'selection') {
+                for (let i = 0; i < n; i++) {
+                    let minIdx = i;
+                    for (let j = i + 1; j < n; j++) {
+                        renderSortBars([j, minIdx], sorted);
+                        log.innerText = `Mencari nilai terkecil... Membandingkan ${arr[j]} dengan min terkini (${arr[minIdx]})`;
+                        await new Promise(r => setTimeout(r, 300));
+                        if (arr[j] < arr[minIdx]) minIdx = j;
+                    }
+                    if (minIdx !== i) {
+                        log.innerText = `Tukar nilai terkecil ${arr[minIdx]} ke posisi ${i}`;
+                        let temp = arr[i];
+                        arr[i] = arr[minIdx];
+                        arr[minIdx] = temp;
+                        sortData = [...arr];
+                    }
+                    sorted.push(i);
+                }
+            } else {
+                // Insertion
+                for (let i = 1; i < n; i++) {
+                    let key = arr[i];
+                    let j = i - 1;
+                    log.innerText = `Sisipkan ${key} ke posisi yang sesuai di bagian kiri...`;
+                    while (j >= 0 && arr[j] > key) {
+                        renderSortBars([j, j + 1], sorted);
+                        await new Promise(r => setTimeout(r, 400));
+                        arr[j + 1] = arr[j];
+                        j = j - 1;
+                        sortData = [...arr];
+                        renderSortBars([j + 1], sorted);
+                    }
+                    arr[j + 1] = key;
+                    sortData = [...arr];
+                }
+                sorted = Array.from({length: n}, (_, k) => k);
+            }
+
+            renderSortBars([], sorted);
+            log.innerText = `[SELESAI] Data berhasil diurutkan!`;
+            playSound('correct');
+            confetti({ particleCount: 50, spread: 60 });
+            btn.disabled = false;
+        }
+
+        // ================= STRUKTUR DATA (STACK & QUEUE) =================
+        let stackList = ["Buku Informatika"];
+        let queueList = ["Budi", "Siti"];
+
+        function renderStack() {
+            const container = document.getElementById('stack-container');
+            container.innerHTML = '';
+            stackList.forEach((item, idx) => {
+                const el = document.createElement('div');
+                el.className = 'w-full max-w-xs bg-purple-600/80 border border-purple-400 text-white font-bold p-3 rounded-xl text-center text-sm shadow-md animate-bounce-short';
+                el.innerText = `${idx + 1}. ${item}`;
+                container.appendChild(el);
+            });
+        }
+
+        function pushStack() {
+            const input = document.getElementById('stack-input');
+            if (!input.value.trim()) return;
+            if (stackList.length >= 5) {
+                playSound('wrong');
+                document.getElementById('stack-log').innerText = "Stack Penuh (Overflow)! Maksimal 5 elemen.";
+                return;
+            }
+            stackList.push(input.value.trim());
+            input.value = '';
+            renderStack();
+            playSound('correct');
+            document.getElementById('stack-log').innerText = "Berhasil menambah ke tumpukan teratas (PUSH).";
+        }
+
+        function popStack() {
+            if (stackList.length === 0) {
+                playSound('wrong');
+                document.getElementById('stack-log').innerText = "Stack Kosong (Underflow)!";
+                return;
+            }
+            const removed = stackList.pop();
+            renderStack();
+            playSound('correct');
+            document.getElementById('stack-log').innerText = `Menghapus '${removed}' dari puncak stack (POP).`;
+        }
+
+        function renderQueue() {
+            const container = document.getElementById('queue-container');
+            container.innerHTML = '';
+            queueList.forEach((item, idx) => {
+                const el = document.createElement('div');
+                el.className = 'flex-shrink-0 bg-emerald-600/80 border border-emerald-400 text-white font-bold px-4 py-3 rounded-xl text-center text-sm shadow-md';
+                el.innerText = `${idx + 1}. ${item}`;
+                container.appendChild(el);
+            });
+        }
+
+        function enqueue() {
+            const input = document.getElementById('queue-input');
+            if (!input.value.trim()) return;
+            if (queueList.length >= 5) {
+                playSound('wrong');
+                document.getElementById('queue-log').innerText = "Antrean Penuh!";
+                return;
+            }
+            queueList.push(input.value.trim());
+            input.value = '';
+            renderQueue();
+            playSound('correct');
+            document.getElementById('queue-log').innerText = "Masuk antrean dari belakang (ENQUEUE).";
+        }
+
+        function dequeue() {
+            if (queueList.length === 0) {
+                playSound('wrong');
+                document.getElementById('queue-log').innerText = "Antrean Kosong!";
+                return;
+            }
+            const removed = queueList.shift();
+            renderQueue();
+            playSound('correct');
+            document.getElementById('queue-log').innerText = `'${removed}' paling depan dilayani & keluar antrean (DEQUEUE).`;
+        }
+
+        // ================= GIM LOGIC =================
+        function switchGame(gameId) {
+            document.querySelectorAll('#sec-gim > div[id^="game-"]').forEach(g => g.classList.add('hidden'));
+            document.getElementById(`${gameId}-container`).classList.remove('hidden');
+
+            document.querySelectorAll('.game-tab-btn').forEach(btn => {
+                btn.classList.remove('bg-purple-600', 'text-white');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
+            });
+            const activeIdx = gameId.replace('game', '');
+            document.getElementById(`gtab-${activeIdx}`).classList.add('bg-purple-600', 'text-white');
+
+            // Render ulang saat switch game agar UI terbarui
+            if(gameId === 'game2') renderGame2();
+            if(gameId === 'game3') renderGame3();
+        }
+
+        // GIM 1
+        let g1Secret = Math.floor(Math.random() * 100) + 1;
+        let g1Attempts = 0;
+
+        function resetGame1() {
+            g1Secret = Math.floor(Math.random() * 100) + 1;
+            g1Attempts = 0;
+            document.getElementById('g1-attempts').innerText = '0';
+            document.getElementById('g1-guess-input').value = '';
+            document.getElementById('g1-feedback').innerHTML = 'Angka rahasia diacak kembali! Siapkan tebakanmu.';
+        }
+
+        function playGame1Guess() {
+            const inputEl = document.getElementById('g1-guess-input');
+            const guess = parseInt(inputEl.value);
+            const feedback = document.getElementById('g1-feedback');
+            if (!guess || guess < 1 || guess > 100) {
+                playSound('wrong');
+                feedback.innerHTML = `<span class="text-pink-400">⚠️ Masukkan angka valid antara 1 - 100!</span>`;
+                return;
+            }
+
+            g1Attempts++;
+            document.getElementById('g1-attempts').innerText = g1Attempts;
+
+            if (guess === g1Secret) {
+                playSound('correct');
+                feedback.innerHTML = `<span class="text-emerald-400">🎉 BENAR! Angka rahasia adalah ${g1Secret}. Ditemukan dalam ${g1Attempts} kali tebakan!</span>`;
+                confetti({ particleCount: 100, spread: 70 });
+            } else if (guess < g1Secret) {
+                playSound('wrong');
+                feedback.innerHTML = `<span class="text-sky-400">📈 Terlalu KECIL! Pilih angka lebih BESAR dari ${guess}.</span>`;
+            } else {
+                playSound('wrong');
+                feedback.innerHTML = `<span class="text-pink-400">📉 Terlalu BESAR! Pilih angka lebih KECIL dari ${guess}.</span>`;
+            }
+        }
+
+        // GIM 2 (Perbaikan Stack Gim)
+        const g2Target = ["🔴 Merah", "🟡 Kuning", "🔵 Biru"];
+        let g2UserStack = [];
+
+        function renderGame2() {
+            const targetEl = document.getElementById('g2-target-recipe');
+            if(targetEl) {
+                targetEl.innerHTML = '';
+                g2Target.forEach((item, i) => {
+                    const d = document.createElement('div');
+                    d.className = 'w-36 py-2 rounded-xl bg-slate-800 text-white font-bold text-xs text-center border border-slate-700 shadow-sm';
+                    d.innerText = item;
+                    targetEl.appendChild(d);
+                });
+            }
+
+            const userEl = document.getElementById('g2-user-stack');
+            if(userEl) {
+                userEl.innerHTML = '';
+                if(g2UserStack.length === 0) {
+                    userEl.innerHTML = '<span class="text-slate-500 text-xs my-auto italic">Tumpukan Kosong</span>';
+                } else {
+                    g2UserStack.forEach((item, idx) => {
+                        const d = document.createElement('div');
+                        d.className = 'w-36 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs text-center border border-purple-400 shadow-md';
+                        d.innerText = item;
+                        userEl.appendChild(d);
+                    });
+                }
+            }
+        }
+
+        function pushGame2Stack(color) {
+            if (g2UserStack.length >= 3) {
+                playSound('wrong');
+                showModal('Stack Penuh!', 'Tumpukan maksimal 3 elemen. Hapus (POP) jika ingin mengganti elemen paling atas.', '⚠️');
+                return;
+            }
+            g2UserStack.push(color);
+            playSound('correct');
+            renderGame2();
+        }
+
+        function popGame2Stack() {
+            if (g2UserStack.length === 0) {
+                playSound('wrong');
+                showModal('Stack Kosong!', 'Tidak ada elemen yang bisa diambil dari tumpukan.', '⚠️');
+                return;
+            }
+            g2UserStack.pop();
+            playSound('correct');
+            renderGame2();
+        }
+
+        function resetGame2() {
+            g2UserStack = [];
+            renderGame2();
+        }
+
+        function checkGame2Win() {
+            if (g2UserStack.length !== g2Target.length) {
+                playSound('wrong');
+                showModal('Belum Tepat', `Tumpukan baru berisi ${g2UserStack.length} elemen. Target resep membutuhkan 3 elemen!`, '❌');
+                return;
+            }
+
+            let isCorrect = true;
+            for (let i = 0; i < g2Target.length; i++) {
+                if (g2UserStack[i] !== g2Target[i]) {
+                    isCorrect = false;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                playSound('correct');
+                showModal('Luar Biasa!', 'Susunan tumpukan Stack kamu tepat sesuai resep LIFO!', '🎉');
+                confetti({ particleCount: 100, spread: 80 });
+            } else {
+                playSound('wrong');
+                showModal('Belum Tepat', 'Susunan belum cocok dengan resep target. Perhatikan urutan dari Bawah ke Atas!', '❌');
+            }
+        }
+
+        // GIM 3 (Perbaikan Queue Gim)
+        let g3Queue = ["Andi", "Siti", "Rudi"];
+        let g3Score = 0;
+
+        function renderGame3() {
+            const display = document.getElementById('g3-queue-display');
+            if(!display) return;
+            
+            display.innerHTML = '';
+            if (g3Queue.length === 0) {
+                display.innerHTML = '<div class="text-slate-500 text-xs italic mx-auto">Antrean kosong. Klik + Pembeli Baru.</div>';
+            } else {
+                g3Queue.forEach((p, i) => {
+                    const el = document.createElement('div');
+                    el.className = `px-4 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+                        i === 0 ? 'bg-emerald-500 text-slate-900 border-2 border-white shadow-lg scale-105' : 'bg-slate-800 text-slate-300 border border-slate-700 opacity-80'
+                    }`;
+                    el.innerHTML = i === 0 ? `<i class="fa-solid fa-bell mr-1 animate-bounce"></i> ${p} (Paling Depan)` : `${i+1}. ${p}`;
+                    display.appendChild(el);
+                });
+            }
+            const scoreEl = document.getElementById('g3-score');
+            if(scoreEl) scoreEl.innerText = g3Score;
+        }
+
+        function addGame3Customer() {
+            const names = ["Budi", "Dewi", "Doni", "Eka", "Fajar", "Gita", "Hana", "Rian", "Siska"];
+            const randomName = names[Math.floor(Math.random() * names.length)];
+            g3Queue.push(randomName);
+            playSound('correct');
+            renderGame3();
+        }
+
+        function serveGame3Customer() {
+            if (g3Queue.length === 0) {
+                playSound('wrong');
+                showModal('Antrean Kosong', 'Tidak ada pelanggan yang bisa dilayani. Tambahkan pembeli baru!', '⚠️');
+                return;
+            }
+            const served = g3Queue.shift();
+            g3Score += 10;
+            playSound('correct');
+            renderGame3();
+            showModal('Pelanggan Dilayani!', `${served} di posisi paling depan (FIFO) berhasil dilayani! (+10 Poin)`, '🛒');
+            if (g3Score >= 50) {
+                confetti({ particleCount: 100, spread: 80 });
+            }
+        }
+
+        // ================= KUIS INTERAKTIF =================
+        const quizQuestions = [
+            {
+                q: "Metode pencarian data yang mengharuskan data terurut terlebih dahulu adalah...",
+                options: ["Linear Search", "Binary Search", "Bubble Sort", "Stack"],
+                answer: 1
+            },
+            {
+                q: "Struktur data yang menerapkan prinsip LIFO (Last In, First Out) adalah...",
+                options: ["Queue", "Array", "Stack", "Binary Tree"],
+                answer: 2
+            },
+            {
+                q: "Algoritma pengurutan yang membandingkan dan menukar dua elemen bersebelahan secara berulang disebut...",
+                options: ["Selection Sort", "Insertion Sort", "Bubble Sort", "Quick Sort"],
+                answer: 2
+            },
+            {
+                q: "Antrean antrean pembelian tiket di bioskop merupakan contoh nyata penerapan struktur data...",
+                options: ["Stack", "Queue", "Tree", "Graph"],
+                answer: 1
+            },
+            {
+                q: "Manakah pernyataan yang BENAR mengenai Binary Search dibandingkan Linear Search?",
+                options: [
+                    "Binary Search lebih lambat untuk data berjumlah sangat besar",
+                    "Binary Search bekerja mengecek satu per satu elemen dari awal",
+                    "Binary Search membagi dua wilayah pencarian secara berulang",
+                    "Binary Search tidak membutuhkan data yang terurut"
+                ],
+                answer: 2
+            }
+        ];
+
+        let currentQuizIdx = 0;
+        let quizScore = 0;
+
+        function loadQuizQuestion() {
+            const q = quizQuestions[currentQuizIdx];
+            document.getElementById('quiz-question-number').innerText = `Soal ${currentQuizIdx + 1} dari ${quizQuestions.length}`;
+            document.getElementById('quiz-question-text').innerText = q.q;
+            document.getElementById('quiz-progress').style.width = `${((currentQuizIdx + 1) / quizQuestions.length) * 100}%`;
+
+            const optContainer = document.getElementById('quiz-options-container');
+            optContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('button');
+                btn.className = "w-full text-left p-4 rounded-2xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 font-semibold text-slate-200 transition flex items-center justify-between";
+                btn.innerHTML = `<span>${String.fromCharCode(65 + idx)}. ${opt}</span> <i class="fa-regular fa-circle text-slate-500"></i>`;
+                btn.onclick = () => selectQuizAnswer(idx);
+                optContainer.appendChild(btn);
+            });
+        }
+
+        function selectQuizAnswer(selectedIdx) {
+            const correctIdx = quizQuestions[currentQuizIdx].answer;
+            if (selectedIdx === correctIdx) {
+                quizScore += 20;
+                playSound('correct');
+            } else {
+                playSound('wrong');
+            }
+
+            currentQuizIdx++;
+            if (currentQuizIdx < quizQuestions.length) {
+                loadQuizQuestion();
+            } else {
+                showQuizResult();
+            }
+        }
+
+        function showQuizResult() {
+            document.getElementById('quiz-question-container').classList.add('hidden');
+            document.getElementById('quiz-result-container').classList.remove('hidden');
+            document.getElementById('quiz-score').innerText = quizScore;
+            confetti({ particleCount: 100, spread: 80 });
+        }
+
+        function restartQuiz() {
+            currentQuizIdx = 0;
+            quizScore = 0;
+            document.getElementById('quiz-result-container').classList.add('hidden');
+            document.getElementById('quiz-question-container').classList.remove('hidden');
+            loadQuizQuestion();
+        }
+
+        // ================= INITIALIZATION =================
+        window.onload = function() {
+            renderSearchArray();
+            renderSortBars();
+            renderStack();
+            renderQueue();
+            renderGame2();
+            renderGame3();
+            loadQuizQuestion();
+        };
+    </script>
+</body>
+</html>
